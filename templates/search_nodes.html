@@ -85,6 +85,15 @@
   {% if data.best %}
     <p><strong>Best match:</strong> {{ data.best.0.code }} — Duration: {{ data.best.1.duration_min }} min, Distance: {{ data.best.1.distance_km }} km</p>
   {% endif %}
+  {% if data.path %}
+    <h4>Shortest path (by duration)</h4>
+    <ol>
+      {% for dest, r in data.path %}
+        <li>{{ r.source.code }} → {{ dest.code }} — {{ r.duration_min }} min, {{ r.distance_km }} km</li>
+      {% endfor %}
+    </ol>
+    <p><strong>Total duration:</strong> {{ data.path_total_duration }} min</p>
+  {% endif %}
   {% if data.neighbors %}
     <details>
       <summary>All neighbors (sorted by code)</summary>
