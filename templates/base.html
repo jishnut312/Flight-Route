@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Flight Routes</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+</head>
+<body>
+  <main class="container">
+    <nav>
+      <ul>
+        <li><strong><a href="/">Flight Routes</a></strong></li>
+      </ul>
+      <ul>
+        <li><a href="/airports/add-with-route/">Add Airport Route</a></li>
+        <li><a href="/routes/search/">Search</a></li>
+      </ul>
+    </nav>
+    <section>
+      {% block content %}{% endblock %}
+    </section>
+  </main>
+</body>
+</html>

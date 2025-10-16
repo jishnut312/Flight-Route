@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Search Routes</h2>
+<form method="post">
+  {% csrf_token %}
+  <fieldset>
+    <label>Base airport code</label>
+    {{ form.base_code }}
+  </fieldset>
+  <fieldset>
+    <label>Operation</label>
+    {{ form.operation }}
+  </fieldset>
+  <fieldset id="fs-n">
+    <label>N (for Nth operations)</label>
+    {{ form.n }}
+  </fieldset>
+  <fieldset id="fs-src">
+    <label>Source airport (for between)</label>
+    {{ form.src_code }}
+  </fieldset>
+  <fieldset id="fs-dst">
+    <label>Destination airport (for between)</label>
+    {{ form.dst_code }}
+  </fieldset>
+  <button type="submit">Search</button>
+</form>
+
+{% if form.non_field_errors %}
+  <article role="alert">
+    {{ form.non_field_errors }}
+  </article>
+{% endif %}
+
+<script>
+  (function() {
+    function byId(id){ return document.getElementById(id); }
+    function toggle() {
+      const opEl = byId('id_operation');
+      if (!opEl) return;
+      const op = opEl.value;
+      const isNth = (op === 'nth_left' || op === 'nth_right');
+      const isBetween = (op === 'shortest_between');
+
+      const fsN = byId('fs-n');
+      const nEl = byId('id_n');
+      if (fsN && nEl) {
+        fsN.style.display = isNth ? '' : 'none';
+        nEl.disabled = !isNth;
+        nEl.required = isNth;
+      }
+
+      const fsSrc = byId('fs-src');
+      const fsDst = byId('fs-dst');
+      const srcEl = byId('id_src_code');
+      const dstEl = byId('id_dst_code');
+      const showBetween = !!isBetween;
+      if (fsSrc && srcEl) {
+        fsSrc.style.display = showBetween ? '' : 'none';
+        srcEl.disabled = !showBetween;
+        srcEl.required = showBetween;
+      }
+      if (fsDst && dstEl) {
+        fsDst.style.display = showBetween ? '' : 'none';
+        dstEl.disabled = !showBetween;
+        dstEl.required = showBetween;
+      }
+    }
+    document.addEventListener('DOMContentLoaded', function() {
+      const opEl = byId('id_operation');
+      if (opEl) {
+        opEl.addEventListener('change', toggle);
+      }
+      toggle();
+    });
+  })();
+  </script>
+
+{% if data %}
+  <h3>Results</h3>
+  <p><strong>Base:</strong> {{ data.base.code }}</p>
+  {% if data.result %}
+    <p><strong>Nth result:</strong> {{ data.result.0.code }} — Duration: {{ data.result.1.duration_min }} min, Distance: {{ data.result.1.distance_km }} km</p>
+  {% endif %}
+  {% if data.best %}
+    <p><strong>Best match:</strong> {{ data.best.0.code }} — Duration: {{ data.best.1.duration_min }} min, Distance: {{ data.best.1.distance_km }} km</p>
+  {% endif %}
+  {% if data.neighbors %}
+    <details>
+      <summary>All neighbors (sorted by code)</summary>
+      <ul>
+        {% for dest, r in data.neighbors %}
+          <li>{{ dest.code }} — {{ r.duration_min }} min, {{ r.distance_km }} km</li>
+        {% endfor %}
+      </ul>
+    </details>
+  {% else %}
+    <p>No outgoing routes from base.</p>
+  {% endif %}
+{% endif %}
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Airports</h2>
+<table>
+  <thead><tr><th>Code</th><th>Name</th></tr></thead>
+  <tbody>
+  {% for a in airports %}
+    <tr><td>{{ a.code }}</td><td>{{ a.name }}</td></tr>
+  {% empty %}
+    <tr><td colspan="2">No airports yet.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+
+<h2>Routes</h2>
+<table>
+  <thead><tr><th>From</th><th>To</th><th>Distance (km)</th><th>Duration (min)</th></tr></thead>
+  <tbody>
+  {% for r in routes %}
+    <tr>
+      <td>{{ r.source.code }}</td>
+      <td>{{ r.destination.code }}</td>
+      <td>{{ r.distance_km }}</td>
+      <td>{{ r.duration_min }}</td>
+    </tr>
+  {% empty %}
+    <tr><td colspan="4">No routes yet.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
